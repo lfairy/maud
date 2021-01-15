@@ -1,0 +1,111 @@
+<!DOCTYPE html><meta charset="utf-8"><title>Web framework integration
+ – Maud, a macro for writing HTML</title><link rel="stylesheet" href="styles.css"><meta name="theme-color" content="#808"><meta name="viewport" content="width=device-width"><header><h1><a href=".">maud</a></h1></header><nav><ul><li><a href="getting-started.html">Getting started</a></li><li><a href="text-escaping.html">Text and escaping</a></li><li><a href="elements-attributes.html">Elements and attributes</a></li><li><a href="splices-toggles.html">Splices and toggles</a></li><li><a href="control-structures.html">Control structures</a></li><li><a href="partials.html">Partials</a></li><li><a href="render-trait.html">The <code>Render</code> trait</a></li><li><b>Web framework integration</b></li><li><a href="faq.html">Frequently asked questions</a></li></ul><ul><li><a href="https://docs.rs/maud/">API documentation</a></li><li><a href="https://github.com/lambda-fairy/maud">GitHub</a></li></ul></nav><main><h2>Web framework integration</h2><p>Maud includes support for these web frameworks: <a href="https://actix.rs/">Actix</a>, <a href="http://ironframework.io">Iron</a>, <a href="https://rocket.rs/">Rocket</a>, and <a href="https://github.com/tomaka/rouille">Rouille</a>.</p>
+<h2><a href="#actix" aria-hidden="true" class="anchor" id="actix"></a>Actix</h2>
+<p>Actix support is available with the &quot;actix-web&quot; feature:</p>
+<pre style="background-color:#ffeeff;">
+<span style="color:#323232;"># ...
+</span><span style="color:#323232;">[dependencies]
+</span><span style="color:#323232;">maud = { version = &quot;*&quot;, features = [&quot;actix-web&quot;] }
+</span><span style="color:#323232;"># ...
+</span></pre>
+<p>Actix request handlers can use a <code>Markup</code> that implements the <code>actix_web::Responder</code> trait.</p>
+<pre style="background-color:#ffeeff;">
+<span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">actix_web::{get, App, HttpServer, </span><span style="color:#0086b3;">Result </span><span style="font-weight:bold;color:#a71d5d;">as</span><span style="color:#323232;"> AwResult};
+</span><span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">maud::{html, Markup};
+</span><span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">std::io;
+</span><span style="color:#323232;">
+</span><span style="color:#323232;">#[get(</span><span style="color:#183691;">&quot;/&quot;</span><span style="color:#323232;">)]
+</span><span style="color:#323232;">async </span><span style="font-weight:bold;color:#a71d5d;">fn </span><span style="font-weight:bold;color:#795da3;">index</span><span style="color:#323232;">() -&gt; AwResult&lt;Markup&gt; {
+</span><span style="color:#323232;">    </span><span style="color:#0086b3;">Ok</span><span style="color:#323232;">(html! {
+</span><span style="color:#323232;">        html {
+</span><span style="color:#323232;">            body {
+</span><span style="color:#323232;">                h1 { </span><span style="color:#183691;">&quot;Hello World!&quot; </span><span style="color:#323232;">}
+</span><span style="color:#323232;">            }
+</span><span style="color:#323232;">        }
+</span><span style="color:#323232;">    })
+</span><span style="color:#323232;">}
+</span><span style="color:#323232;">
+</span><span style="color:#323232;">#[actix_web::main]
+</span><span style="color:#323232;">async </span><span style="font-weight:bold;color:#a71d5d;">fn </span><span style="font-weight:bold;color:#795da3;">main</span><span style="color:#323232;">() -&gt; io::Result&lt;()&gt; {
+</span><span style="color:#323232;">    HttpServer::new(|| App::new().</span><span style="color:#62a35c;">service</span><span style="color:#323232;">(index))
+</span><span style="color:#323232;">        .</span><span style="color:#62a35c;">bind</span><span style="color:#323232;">((</span><span style="color:#183691;">&quot;127.0.0.1&quot;</span><span style="color:#323232;">, </span><span style="color:#0086b3;">8080</span><span style="color:#323232;">))</span><span style="font-weight:bold;color:#a71d5d;">?
+</span><span style="color:#323232;">        .</span><span style="color:#62a35c;">run</span><span style="color:#323232;">()
+</span><span style="color:#323232;">        .await
+</span><span style="color:#323232;">}
+</span></pre>
+<h2><a href="#iron" aria-hidden="true" class="anchor" id="iron"></a>Iron</h2>
+<p>Iron support is available with the &quot;iron&quot; feature:</p>
+<pre style="background-color:#ffeeff;">
+<span style="color:#323232;"># ...
+</span><span style="color:#323232;">[dependencies]
+</span><span style="color:#323232;">maud = { version = &quot;*&quot;, features = [&quot;iron&quot;] }
+</span><span style="color:#323232;"># ...
+</span></pre>
+<p>With this feature enabled, you can then build a <code>Response</code> from a <code>Markup</code> object directly. Here's an example application using Iron and Maud:</p>
+<pre style="background-color:#ffeeff;">
+<span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">iron::prelude::</span><span style="font-weight:bold;color:#a71d5d;">*</span><span style="color:#323232;">;
+</span><span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">iron::status;
+</span><span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">maud::html;
+</span><span style="color:#323232;">
+</span><span style="font-weight:bold;color:#a71d5d;">fn </span><span style="font-weight:bold;color:#795da3;">main</span><span style="color:#323232;">() {
+</span><span style="color:#323232;">    Iron::new(|r: </span><span style="font-weight:bold;color:#a71d5d;">&amp;mut</span><span style="color:#323232;"> Request| {
+</span><span style="color:#323232;">        </span><span style="font-weight:bold;color:#a71d5d;">let</span><span style="color:#323232;"> markup </span><span style="font-weight:bold;color:#a71d5d;">= </span><span style="color:#323232;">html! {
+</span><span style="color:#323232;">            h1 { </span><span style="color:#183691;">&quot;Hello, world!&quot; </span><span style="color:#323232;">}
+</span><span style="color:#323232;">            p {
+</span><span style="color:#323232;">                </span><span style="color:#183691;">&quot;You are viewing the page at &quot; </span><span style="color:#323232;">(r.url)
+</span><span style="color:#323232;">            }
+</span><span style="color:#323232;">        };
+</span><span style="color:#323232;">        </span><span style="color:#0086b3;">Ok</span><span style="color:#323232;">(Response::with((status::Ok, markup)))
+</span><span style="color:#323232;">    }).</span><span style="color:#62a35c;">http</span><span style="color:#323232;">(</span><span style="color:#183691;">&quot;localhost:3000&quot;</span><span style="color:#323232;">).</span><span style="color:#62a35c;">unwrap</span><span style="color:#323232;">();
+</span><span style="color:#323232;">}
+</span></pre>
+<p><code>Markup</code> will set the content type of the response automatically, so you don't need to add it yourself.</p>
+<h2><a href="#rocket" aria-hidden="true" class="anchor" id="rocket"></a>Rocket</h2>
+<p>Rocket works in a similar way, except using the <code>rocket</code> feature:</p>
+<pre style="background-color:#ffeeff;">
+<span style="color:#323232;"># ...
+</span><span style="color:#323232;">[dependencies]
+</span><span style="color:#323232;">maud = { version = &quot;*&quot;, features = [&quot;rocket&quot;] }
+</span><span style="color:#323232;"># ...
+</span></pre>
+<p>This adds a <code>Responder</code> implementation for the <code>Markup</code> type, so you can return the result directly:</p>
+<pre style="background-color:#ffeeff;">
+<span style="color:#323232;">#![feature(decl_macro)]
+</span><span style="color:#323232;">
+</span><span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">maud::{html, Markup};
+</span><span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">rocket::{get, routes};
+</span><span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">std::borrow::Cow;
+</span><span style="color:#323232;">
+</span><span style="color:#323232;">#[get(</span><span style="color:#183691;">&quot;/&lt;name&gt;&quot;</span><span style="color:#323232;">)]
+</span><span style="font-weight:bold;color:#a71d5d;">fn </span><span style="font-weight:bold;color:#795da3;">hello</span><span style="color:#323232;">&lt;</span><span style="font-weight:bold;color:#a71d5d;">&#39;a</span><span style="color:#323232;">&gt;(name: Cow&lt;</span><span style="font-weight:bold;color:#a71d5d;">&#39;a</span><span style="color:#323232;">, </span><span style="font-weight:bold;color:#a71d5d;">str</span><span style="color:#323232;">&gt;) -&gt; Markup {
+</span><span style="color:#323232;">    html! {
+</span><span style="color:#323232;">        h1 { </span><span style="color:#183691;">&quot;Hello, &quot; </span><span style="color:#323232;">(name) </span><span style="color:#183691;">&quot;!&quot; </span><span style="color:#323232;">}
+</span><span style="color:#323232;">        p { </span><span style="color:#183691;">&quot;Nice to meet you!&quot; </span><span style="color:#323232;">}
+</span><span style="color:#323232;">    }
+</span><span style="color:#323232;">}
+</span><span style="color:#323232;">
+</span><span style="font-weight:bold;color:#a71d5d;">fn </span><span style="font-weight:bold;color:#795da3;">main</span><span style="color:#323232;">() {
+</span><span style="color:#323232;">    rocket::ignite().</span><span style="color:#62a35c;">mount</span><span style="color:#323232;">(</span><span style="color:#183691;">&quot;/&quot;</span><span style="color:#323232;">, routes![hello]).</span><span style="color:#62a35c;">launch</span><span style="color:#323232;">();
+</span><span style="color:#323232;">}
+</span></pre>
+<h2><a href="#rouille" aria-hidden="true" class="anchor" id="rouille"></a>Rouille</h2>
+<p>Unlike with the other frameworks, Rouille doesn't need any extra features at all! Calling <code>Response::html</code> on the rendered <code>Markup</code> will Just Work®.</p>
+<pre style="background-color:#ffeeff;">
+<span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">maud::html;
+</span><span style="font-weight:bold;color:#a71d5d;">use </span><span style="color:#323232;">rouille::{Response, router};
+</span><span style="color:#323232;">
+</span><span style="font-weight:bold;color:#a71d5d;">fn </span><span style="font-weight:bold;color:#795da3;">main</span><span style="color:#323232;">() {
+</span><span style="color:#323232;">    rouille::start_server(</span><span style="color:#183691;">&quot;localhost:8000&quot;</span><span style="color:#323232;">, </span><span style="font-weight:bold;color:#a71d5d;">move |</span><span style="color:#323232;">request</span><span style="font-weight:bold;color:#a71d5d;">| </span><span style="color:#323232;">{
+</span><span style="color:#323232;">        router!(request,
+</span><span style="color:#323232;">            (</span><span style="color:#0086b3;">GET</span><span style="color:#323232;">) (</span><span style="font-weight:bold;color:#a71d5d;">/</span><span style="color:#323232;">{name: </span><span style="color:#0086b3;">String</span><span style="color:#323232;">}) </span><span style="font-weight:bold;color:#a71d5d;">=&gt; </span><span style="color:#323232;">{
+</span><span style="color:#323232;">                Response::html(html! {
+</span><span style="color:#323232;">                    h1 { </span><span style="color:#183691;">&quot;Hello, &quot; </span><span style="color:#323232;">(name) </span><span style="color:#183691;">&quot;!&quot; </span><span style="color:#323232;">}
+</span><span style="color:#323232;">                    p { </span><span style="color:#183691;">&quot;Nice to meet you!&quot; </span><span style="color:#323232;">}
+</span><span style="color:#323232;">                })
+</span><span style="color:#323232;">            },
+</span><span style="color:#323232;">            </span><span style="font-weight:bold;color:#a71d5d;">_ =&gt; </span><span style="color:#323232;">Response::empty_404()
+</span><span style="color:#323232;">        )
+</span><span style="color:#323232;">    });
+</span><span style="color:#323232;">}
+</span></pre>
+</main><footer><p><a href="https://github.com/lambda-fairy/maud/tree/eaf552d417ac372c4fd31e497367b80fdc5e90e2">v0.22.1-23-geaf552d</a></p></footer>
