@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Support `no_std` + `alloc`.
+  [#278](https://github.com/lambda-fairy/maud/issues/278)
+
 ## [0.22.2] - 2021-01-09
 
 - Don't require `?` suffix for empty attributes. The old syntax is kept for backward compatibility.
@@ -55,12 +58,12 @@
 - Dropped support for the `maud_lints` crate
   [66ddbca](https://github.com/lambda-fairy/maud/commit/66ddbcac986f099e309c28491c276de39340068a)
 - Update to rustc 1.31.0-nightly (77af31408 2018-10-11)
-    - The feature flags have changed again! Remove `#![feature(use_extern_macros)]` and `#![feature(proc_macro_non_items)]`, and add `#![feature(proc_macro_hygiene)]` in their place. See the [documentation][getting-started] for a working example.
+  - The feature flags have changed again! Remove `#![feature(use_extern_macros)]` and `#![feature(proc_macro_non_items)]`, and add `#![feature(proc_macro_hygiene)]` in their place. See the [documentation][getting-started] for a working example.
 
 ## [0.18.1] - 2018-07-18
 
 - Update to rustc 1.29.0-nightly (1ecf6929d 2018-07-16)
-    - The `proc_macro` feature was recently stabilized ([rust-lang/rust#52081]). As a result of this change, you may get "unresolved import" errors after updating your Rust compiler. To fix this error, replace any `#![feature(proc_macro)]` in your crate with `#![feature(use_extern_macros)]`. See the [documentation][getting-started] for a working example.
+  - The `proc_macro` feature was recently stabilized ([rust-lang/rust#52081]). As a result of this change, you may get "unresolved import" errors after updating your Rust compiler. To fix this error, replace any `#![feature(proc_macro)]` in your crate with `#![feature(use_extern_macros)]`. See the [documentation][getting-started] for a working example.
 
 [rust-lang/rust#52081]: https://github.com/rust-lang/rust/pull/52081
 [getting-started]: https://maud.lambda.xyz/getting_started.html
@@ -97,7 +100,7 @@
 ## [0.17.2] - 2017-11-19
 
 - Iron 0.6 support
-  [#107](https://github.com/lambda-fairy/maud/pull/107)
+   [#107](https://github.com/lambda-fairy/maud/pull/107)
 - Implement `Clone` and `Copy` for `PreEscaped`
   [#101](https://github.com/lambda-fairy/maud/pull/101)
 - Allow braces in the boolean expression for a toggled class
@@ -162,7 +165,6 @@
   [#59](https://github.com/lambda-fairy/maud/issues/59)
 - Update to latest syntax extension API
 
-
 ## [0.13.0] - 2016-11-03
 
 - Support `@while` and `@while let`
@@ -172,7 +174,6 @@
 - Single quotes (`'`) are no longer escaped
 - Update to latest syntax extension API
 
-
 ## [0.12.0] - 2016-10-09
 
 - Change `Render` and `RenderOnce` to return `Markup` instead
@@ -180,18 +181,15 @@
 - Add a bunch of optimizations from Horrorshow
   [#46](https://github.com/lambda-fairy/maud/issues/46)
 
-
 ## [0.11.1] - 2016-09-25
 
 - Various documentation fixes
-
 
 ## [0.11.0] - 2016-09-24
 
 - The `html!` macro now returns a `String` instead of taking a writer argument
 - `iron-maud` is obsolete; enable the `"iron"` feature on the `maud` crate instead
 - Remove `@call` syntax
-
 
 ## [0.10.0] - 2016-09-20
 
@@ -203,11 +201,9 @@
 - Require parentheses around the parameter to `@call`
 - All literals must now be quoted, e.g. `"42"` not `42`
 
-
 ## [0.9.2] - 2016-07-10
 
 - Update to latest syntax extension API
-
 
 ## [0.9.1] - 2016-07-03
 
@@ -215,18 +211,15 @@
 - Silence "duplicate loop labels" warnings
   [#36](https://github.com/lambda-fairy/maud/issues/36)
 
-
 ## [0.9.0] - 2016-06-12
 
 - Implement ID shorthand syntax, e.g. `div#foo`
   [#35](https://github.com/lambda-fairy/maud/issues/35)
 - Update to latest syntax extension API
 
-
 ## [0.8.1] - 2016-04-27
 
 - Update to latest syntax extension API
-
 
 ## [0.8.0] - 2016-02-28
 
@@ -245,8 +238,7 @@
   [#31](https://github.com/lambda-fairy/maud/pull/31)
 - Update to latest syntax extension API
 
-
-[Unreleased]: https://github.com/lambda-fairy/maud/compare/v0.22.2...HEAD
+[unreleased]: https://github.com/lambda-fairy/maud/compare/v0.22.2...HEAD
 [0.22.2]: https://github.com/lambda-fairy/maud/compare/v0.22.1...v0.22.2
 [0.22.1]: https://github.com/lambda-fairy/maud/compare/v0.22.0...v0.22.1
 [0.22.0]: https://github.com/lambda-fairy/maud/compare/v0.21.0...v0.22.0
